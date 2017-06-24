@@ -1,7 +1,7 @@
 // 引入jsonp
 import msjJSONP from 'jsonp'
 
-export default function (url, data, option) {
+export default function jsonp(url, data, option) {
   url += (url.indexOf('?') < 0 ? '?' : '&') + param(data)
   return new Promise((resolve, reject) => {
     msjJSONP(url, option, (err, data) => {

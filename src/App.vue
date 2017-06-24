@@ -8,7 +8,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  
+// 创建心模块
   import Hader from 'components/m-hder/hader'
   import Msja from 'components/msj/msj'
   import Dooter from 'components/foodter/dibu'

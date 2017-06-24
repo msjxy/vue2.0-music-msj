@@ -3,16 +3,20 @@
    <hader></hader>
     <msja> </msja>
     <router-view></router-view>
+    <dooter></dooter>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  
   import Hader from 'components/m-hder/hader'
   import Msja from 'components/msj/msj'
+  import Dooter from 'components/foodter/dibu'
   export default {
     components: {
       Hader,
-      Msja
+      Msja,
+      Dooter
     }
   }
 </script>

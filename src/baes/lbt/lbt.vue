@@ -5,7 +5,7 @@
       </slot>
     </div>
     <div class="dots">
-      <span class="dot" v-for="item in dots"></span>
+      <span class="dot"  v-for="(item, index) in dots" :class="{active: lbtindex === index}"></span>
     </div>
   </div>
 </template>
@@ -16,7 +16,8 @@
   export default {
     data() {
       return {
-        dots: []
+        dots: [],
+        lbtindex: 0
       }
     },
     props: {
@@ -30,20 +31,29 @@
       },
       interval: {
         type: Number,
-        default: 4000
+        default: 2000
       }
     },
     mounted() {
       setTimeout(() => {
         this.setsluderWudth()
-        this.indextods()
+        this.indextodsa()
         this.initsliders()
+        if (this.autoPlay) {
+          this.plays()
+        }
       }, 20)
+      window.addEventListener('resize', () => {
+        if (!this.slider) {
+          return
+        }
+        this.setsluderWudth(true)
+      })
     },
-
     methods: {
-      setsluderWudth() {
+      setsluderWudth(isResize) {
         this.chained = this.$refs.sliderGroup.children
+        console.log(this.chained.length)
         let width = 0
         let sliderwidth = this.$refs.slider.clientWidth
         for (let i = 0; i < this.chained.length; i++) {
@@ -53,13 +63,10 @@
           child.style.width = sliderwidth + 'px'
           width += sliderwidth
         }
-        if (this.loop) {
+        if (this.loop && !isResize) {
           width += 2 * sliderwidth
         }
         this.$refs.sliderGroup.style.width = width + 'px'
-      },
-      indextods() {
-        this.dots = new Array(this.children.length)
       },
       initsliders() {
         this.slider = new BScroll(this.$refs.slider, {
@@ -72,6 +79,29 @@
           snapSpeed: 400,
           click: true
         })
+        this.slider.on('scrollEnd', () => {
+          let pageindex = this.slider.getCurrentPage().pageX
+          if (this.loop) {
+            pageindex -= 1
+          }
+          this.lbtindex = pageindex
+          if (this.autoPlay) {
+            clearTimeout(this.timer)
+            this.plays()
+          }
+        })
+      },
+      indextodsa() {
+        this.dots = new Array(this.chained.length)
+      },
+      plays() {
+        let pageIndex = this.lbtindex + 1
+        if (this.loop) {
+          pageIndex += 1
+        }
+        this.timer = setTimeout(() => {
+          this.slider.goToPage(pageIndex, 0, 400)
+        }, this.interval)
       }
     }
   }
@@ -82,6 +112,7 @@
 
   .slider
     min-height: 1px
+    position: relative
     .slider-group
       position: relative
       overflow: hidden

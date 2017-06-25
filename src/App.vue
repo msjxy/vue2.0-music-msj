@@ -11,13 +11,12 @@
 // 创建心模块
   import Hader from 'components/m-hder/hader'
   import Msja from 'components/msj/msj'
-  import Dooter from 'components/foodter/dibu'
+//  import Dooter from 'components/foodter/dibu'
 // 注册模
   export default {
     components: {
       Hader,
-      Msja,
-      Dooter
+      Msja
     }
   }
 </script>

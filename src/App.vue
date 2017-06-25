@@ -2,8 +2,9 @@
   <div id="app">
    <hader></hader>
     <msja> </msja>
-    <router-view></router-view>
-    <dooter></dooter>
+    <keep-alive>
+     <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 

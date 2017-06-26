@@ -1,6 +1,5 @@
 <template>
   <div>
-    ss
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -8,7 +7,7 @@
   import {ERR_OK} from 'api/config'
   import Singer from 'common/js/singer'
   const HOT_NAME = '热门'
-  const NOT_NAME_LENGTH = 10
+  const HOT_NAME_LENGTH = 10
   export default {
     data() {
       return {
@@ -22,45 +21,55 @@
       geshoulist() {
         gettwo().then((res) => {
           if (res.code === ERR_OK) {
-            alert(1)
             this.singelist = res.data.list
-            console.log(singerdata(this.singelist))
           }
+          console.log(this.singderlist(this.singelist))
         })
       },
-      singerdata(list){
+      singderlist(list) {
         let map = {
           hot: {
             title: HOT_NAME,
             items: []
           }
         }
-        list.forEach((itmes, index) => {
-          if (index < NOT_NAME_LENGTH) {
-            map.hot.items.push(
-              new Singer({
-                id: itmes.Fsinger_mid,
-                name: itmes.Fsinger_name
-              })
-            )
+        list.forEach((item, index) => {
+          if (index < HOT_NAME_LENGTH) {
+            map.hot.items.push(new Singer({
+              id: item.Fsinger_mid,
+              name: item.Fsinger_name
+            }))
           }
-          const key =itmes.Findex
+          const key = item.Findex
           if (!map[key]) {
             map[key] = {
               title: key,
               items: []
             }
           }
-          map[key].items.push(
-            new Singer({
-              id: itmes.Fsinger_mid,
-              name: itmes.Fsinger_name
-            })
-          )
+          map[key].items.push(new Singer({
+            id: item.Fsinger_mid,
+            name: item.Fsinger_name
+          }))
         })
-        consloe.log(map)
+        console.log(map)
+//        为了得到有序列表 处理map
+        let hot = []
+        let ret = []
+        for (let key in map) {
+          let val = map[key]
+          if (val.title.match(/[a-zA-Z]/)) {
+            ret.push(val)
+          } else if (val.title === HOT_NAME) {
+            hot.push(val)
+          }
+        }
+        ret.sort((a, b) => {
+          return a.title.charCodeAt(0) - b.title.charCodeAt(0)
+        })
+        console.log(ret)
+        return hot.concat(ret)
       }
-
     }
   }
 </script>

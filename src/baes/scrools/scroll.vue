@@ -19,6 +19,10 @@
       data: {
         type: Array,
         default: null
+      },
+      listlety: {
+        type: Boolean,
+        default: false
       }
     },
     mounted() {
@@ -32,6 +36,12 @@
           probeType: this.probeType,
           click: this.click
         })
+        if (this.listlety) {
+          let me = this
+          this.scroll.on('scroll', (pos) => {
+            me.$emit('scroll', pos)
+          })
+        }
       },
       enable() {
         this.scroll && this.scroll.enable()

@@ -11,7 +11,7 @@
         </ul>
       </li>
     </ul>
-    <div class="list-shortcut" @touchstart="ontouchs" @touchmove>
+    <div class="list-shortcut" @touchstart="ontouchs" @touchmove.stop.prevent="touchmovea">
       <ul>
         <li v-for="(item, index) in letlistone" class="item" v-text="item"  :data-index="index"></li>
       </ul>
@@ -22,7 +22,11 @@
 <script type="text/ecmascript-6">
   import Scroll from 'base/scrools/scroll'
   import {tchoucsa} from 'common/js/dom'
+  const hlis = 18
   export default {
+    created() {
+      this.touchl = {}
+    },
     props: {
       data: {
         type: Array,
@@ -39,8 +43,25 @@
     methods: {
       ontouchs(e) {
         let achorindex = tchoucsa(e.target, 'index')
-        this.$refs.listview.scrollToElement(this.$refs.listGroup[achorindex], 0)
-        console.log(2)
+        let firsttouch = e.touches[0]
+        this.touchl.y1 = firsttouch.pageY
+        this.touchl.achorindex = achorindex
+        this.moveapple(achorindex)
+      },
+      touchmovea(e) {
+        console.log(this.touchl.y1 + '第一次滑动的位置')
+        let firsttouch = e.touches[0]
+        this.touchl.y2 = firsttouch.pageY
+        console.log(this.touchl.y2)
+        let data = this.touchl.y2 - this.touchl.y1
+        console.log(data + 3)
+        let datalenght = data / hlis | 0
+        console.log(datalenght)
+        let achorindex = parseInt(this.touchl.achorindex) + datalenght
+        this.moveapple(achorindex)
+      },
+      moveapple(index) {
+        this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
       }
     },
     components: {

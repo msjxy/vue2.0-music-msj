@@ -1,6 +1,7 @@
 <template>
   <div class="singer" ref="singer">
-    <list-view :data="singelist"></list-view>
+    <list-view @select="selectSinger" :data="singelist"></list-view>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -9,7 +10,7 @@
   import {ERR_OK} from 'api/config'
   import Singer from 'common/js/singer'
   import ListView from 'base/gslist/gelist'
-
+  import {mapMutations} from 'vuex'
   const HOT_NAME = '热门'
   const HOT_NAME_LENGTH = 10
 
@@ -23,6 +24,12 @@
       this.geshoulist()
     },
     methods: {
+      selectSinger(singer) {
+        this.$router.push({
+          path: `two/${singer.id}`
+        })
+        this.setSinger(singer)
+      },
       geshoulist() {
         gettwo().then((res) => {
           if (res.code === ERR_OK) {
@@ -71,7 +78,10 @@
           return a.title.charCodeAt(0) - b.title.charCodeAt(0)
         })
         return hot.concat(ret)
-      }
+      },
+      ...mapMutations({
+        setSinger: 'SET_SINGER'
+      })
     },
     components: {
       ListView

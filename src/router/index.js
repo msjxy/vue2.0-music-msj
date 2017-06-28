@@ -4,6 +4,7 @@ import One from 'components/one/tuijian'
 import Two from 'components/two/geshou'
 import Three from 'components/three/paihang'
 import Four from 'components/four/sousuo'
+import SingerDetall from 'components/singer-detall/singer-detall'
 Vue.use(Router)
 
 export default new Router({
@@ -14,22 +15,28 @@ export default new Router({
       component: One
     },
     {
-      path: '/One',
+      path: '/one',
       name: 'One',
       component: One
     },
     {
-      path: '/Two',
-      name: 'Two',
-      component: Two
+      path: '/two',
+      component: Two,
+      children: [
+        {
+          path: ':id',
+          component: SingerDetall
+        }
+      ]
+
     },
     {
-      path: '/Three',
+      path: '/three',
       name: 'Three',
       component: Three
     },
     {
-      path: '/Four',
+      path: '/four',
       name: 'Four',
       component: Four
     }

@@ -3,6 +3,7 @@ import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 // 解决手机端点击事件延迟
 import mobie from 'fastclick'
 import VueLazyload from 'vue-lazyload'
@@ -19,5 +20,6 @@ Vue.use(VueLazyload, {
 new Vue({
   el: '#app',
   render: h => h(App),
+  store,
   router
 })

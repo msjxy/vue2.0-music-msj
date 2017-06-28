@@ -1,8 +1,6 @@
 <template>
   <transition name="slide">
-    <div class="singer-datall">
-
-    </div>
+    <music-list :title="title" :bg-image="bgImage" :songs="songs"></music-list>
   </transition>
 </template>
 
@@ -11,7 +9,7 @@
   import { geshouxingqing } from 'api/geshou-data'
   import { ERR_OK } from 'api/config'
   import { createdata } from 'common/js/song'
-
+  import MusicList from 'components/music-list/music-list'
   export default {
     data() {
       return {
@@ -19,6 +17,12 @@
       }
     },
     computed: {
+      title() {
+        return this.singer.name
+      },
+      bgImage() {
+        return this.singer.avatar
+      },
       ...mapGetters([
         'singer'
       ])
@@ -47,10 +51,11 @@
             ret.push(createdata(musicData))
           }
         })
-        console.log(1111)
-        console.log(ret)
         return ret
       }
+    },
+    components: {
+      MusicList
     }
   }
 </script>

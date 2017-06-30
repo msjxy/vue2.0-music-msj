@@ -1,22 +1,34 @@
 <template>
   <div class="music-list">
-    <div class="back">
+    <div class="back" @click="back()">
       <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
-    <div class="bg-image" :style="bgtyle">
+    <div class="bg-image" :style="bgtyle" ref="bgImage">
       <div class="play-wrapper">
-        <div class="play">
+        <div ref="playBtn" v-show="songs.length > 0" class="play" >
           <i class="icon-play"></i>
-          <span class="text">随机播放全部{{}}</span>
+          <span class="text">随机播放全部</span>
         </div>
       </div>
       <div class="filter" ref="filter"></div>
     </div>
+    <div class="bg-layer" ref="layer">   </div>
+      <scroll @scroll="scrolls" :probe-type="probeType" :listlety="listlety" :data="songs" class="list"
+              ref="list">
+        <div class="song-list-wrapper">
+          <song-list :songs="songs"></song-list>
+        </div>
+      </scroll>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import Scroll from 'base/scrools/scroll'
+  import SongList from 'base/song-list/song-list'
+  import {perfisle} from 'common/js/dom'
+  const transfo = perfisle('transform')
+  const drakemax = perfisle('backdrop-filter')
   export default {
     props: {
       bgImage: {
@@ -36,6 +48,61 @@
       bgtyle() {
         return `background-image:url(${this.bgImage})`
       }
+    },
+    mounted() {
+      this.tranlatery = this.$refs.bgImage.clientHeight
+      this.mintanslatery = -this.tranlatery
+      this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`
+    },
+    created() {
+      this.probeType = 3
+      this.listlety = true
+    },
+    data() {
+      return {
+        scrollY: 0
+      }
+    },
+    methods: {
+      scrolls(pos) {
+        this.scrollY = pos.y
+      },
+      back() {
+        this.$router.back()
+      }
+    },
+    watch: {
+      scrollY(newY) {
+        let translateryaY = Math.max(this.mintanslatery, newY)
+        let zindex = 0
+        let scale = 1
+        let blur = 0
+        this.$refs.layer.style[transfo] = `translate3d(0, ${translateryaY}px, 0)`
+        const percent = Math.abs(newY / this.tranlatery)
+        if (newY > 0) {
+          console.log(this.tranlatery)
+          zindex = 10
+          scale = 1 + percent
+        } else {
+          blur = Math.min(20 * percent, 20)
+        }
+        this.$refs.filter.style[drakemax] = `blur(${blur})`
+        if (newY < (this.mintanslatery + 40)) {
+          zindex = 10
+          this.$refs.bgImage.style.paddingTop = 0
+          this.$refs.bgImage.style.height = '40px'
+          this.$refs.playBtn.style.display = 'none '
+        } else {
+          this.$refs.bgImage.style.paddingTop = '70%'
+          this.$refs.bgImage.style.height = 0
+        }
+        this.$refs.bgImage.style.zIndex = zindex
+        this.$refs.bgImage.style[transfo] = `scale(${scale})`
+      }
+    },
+    components: {
+      Scroll,
+      SongList
     }
   }
 </script>

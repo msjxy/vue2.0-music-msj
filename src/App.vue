@@ -5,6 +5,7 @@
     <keep-alive>
      <router-view></router-view>
     </keep-alive>
+    <player></player>
   </div>
 </template>
 
@@ -12,12 +13,14 @@
 // 创建心模块
   import Hader from 'components/m-hder/hader'
   import Msja from 'components/msj/msj'
+  import Player from 'components/player/player'
 //  import Dooter from 'components/foodter/dibu'
 // 注册模
   export default {
     components: {
       Hader,
-      Msja
+      Msja,
+      Player
     }
   }
 </script>

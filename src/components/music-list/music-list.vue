@@ -17,7 +17,7 @@
       <scroll @scroll="scrolls" :probe-type="probeType" :listlety="listlety" :data="songs" class="list"
               ref="list">
         <div class="song-list-wrapper">
-          <song-list :songs="songs"></song-list>
+          <song-list @select="selectItem" :songs="songs"></song-list>
         </div>
       </scroll>
   </div>
@@ -27,8 +27,10 @@
   import Scroll from 'base/scrools/scroll'
   import SongList from 'base/song-list/song-list'
   import {perfisle} from 'common/js/dom'
+  import {mapActions} from 'vuex'
   const transfo = perfisle('transform')
   const drakemax = perfisle('backdrop-filter')
+
   export default {
     props: {
       bgImage: {
@@ -69,7 +71,16 @@
       },
       back() {
         this.$router.back()
-      }
+      },
+      selectItem(itme, index) {
+        this.seletPlay({
+          list: this.songs,
+          index
+        })
+      },
+      ...mapActions([
+        'seletPlay'
+      ])
     },
     watch: {
       scrollY(newY) {

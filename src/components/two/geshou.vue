@@ -26,7 +26,7 @@
     methods: {
       selectSinger(singer) {
         this.$router.push({
-          path: `two/${singer.id}`
+          path: `/two/${singer.id}`
         })
         this.setSinger(singer)
       },

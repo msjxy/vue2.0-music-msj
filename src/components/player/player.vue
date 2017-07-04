@@ -30,20 +30,25 @@
           </div>
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper"></div>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
+          </div>
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
-              <i class="icon-prev"></i>
+            <div class="icon i-left" :class="disbleCls" >
+              <i @click="prev" class="icon-prev"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disbleCls">
               <i @click="togglePlying" :class="playIcon"></i>
             </div>
-            <div class="icon i-right">
-              <i class="icon-next"></i>
+            <div class="icon i-right" :class="disbleCls">
+              <i @click="next" class="icon-next"></i>
             </div>
-            <div class="icon i-right">
+            <div class="icon i-right" :class="disbleCls">
               <i class="icon icon-not-favorite"></i>
             </div>
           </div>
@@ -67,7 +72,9 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error"
+           @timeupdate="updateTime"
+    ></audio>
   </div>
 </template>
 
@@ -77,6 +84,12 @@
   import {perfisle} from 'common/js/dom'
   const transform = perfisle('transform')
   export default {
+    data() {
+      return {
+        songReady: false,
+        currentTime: 0
+      }
+    },
     computed: {
       cdCls() {
         return this.playing ? 'play' : 'play pause'
@@ -87,11 +100,15 @@
       miniIcon() {
         return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
       },
+      disbleCls() {
+        return this.songReady ? '' : 'disable'
+      },
       ...mapGetters([
         'fullScreen',
         'playlist',
         'currentSong',
-        'playing'
+        'playing',
+        'currentIndex'
       ])
     },
     methods: {
@@ -156,9 +173,61 @@
           scale
         }
       },
+      updateTime(e) {
+        this.currentTime = e.target.currentTime
+      },
+      format(interval) {
+        interval = interval | 0
+        const minute = interval / 60 | 0
+        const second = this.pads(interval % 60)
+        return `${minute}:${second}`
+      },
+      pads(num, n = 2) {
+        let len = num.toString().length
+        while (len < n) {
+          num = '0' + num
+          len++
+        }
+        return num
+      },
+      next() {
+        if (!this.songReady) {
+          return
+        }
+        let index = this.currentIndex + 1
+        if (index === this.playlist.length) {
+          index = 0
+        }
+        this.setCurrrniIndex(index)
+        if (!this.playing) {
+          this.togglePlying()
+        }
+        this.songReady = false
+      },
+      prev() {
+        if (!this.songReady) {
+          return
+        }
+        let index = this.currentIndex - 1
+        if (index === -1) {
+          index = this.playlist.length - 1
+        }
+        this.setCurrrniIndex(index)
+        if (!this.playing) {
+          this.togglePlying()
+        }
+        this.songReady = false
+      },
+      ready() {
+        this.songReady = true
+      },
+      error() {
+        this.songReady = true
+      },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
-        setPlayingState: 'SET_PLAYING_STATE'
+        setPlayingState: 'SET_PLAYING_STATE',
+        setCurrrniIndex: 'SET_CURRENTZ_INDEX'
       })
     },
     watch: {

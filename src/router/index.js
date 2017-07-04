@@ -11,12 +11,10 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'One',
       component: One
     },
     {
       path: '/one',
-      name: 'One',
       component: One
     },
     {
@@ -32,12 +30,10 @@ export default new Router({
     },
     {
       path: '/three',
-      name: 'Three',
       component: Three
     },
     {
       path: '/four',
-      name: 'Four',
       component: Four
     }
   ]

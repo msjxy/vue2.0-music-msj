@@ -20,7 +20,7 @@
         <div class="middle">
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
-              <div  class="cd" :class="cdCls" ref="cd">
+              <div class="cd" :class="cdCls" ref="cd">
                 <img :src="currentSong.imge" class="image">
               </div>
             </div>
@@ -32,14 +32,16 @@
         <div class="bottom">
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
-            <div class="progress-bar-wrapper"></div>
+            <div class="progress-bar-wrapper">
+              <progress-ovar :percent="percent" @msjper="msjabc"></progress-ovar>
+            </div>
             <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
           <div class="operators">
-            <div class="icon i-left">
-              <i class="icon-sequence"></i>
+            <div class="icon i-left" @click="chingeMode">
+              <i :class="iconMOde"></i>
             </div>
-            <div class="icon i-left" :class="disbleCls" >
+            <div class="icon i-left" :class="disbleCls">
               <i @click="prev" class="icon-prev"></i>
             </div>
             <div class="icon i-center" :class="disbleCls">
@@ -65,7 +67,9 @@
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <i @click.stop="togglePlying" :class="miniIcon"></i>
+          <progress-circle :radius="radius" :percent="percent">
+            <i @click.stop="togglePlying" :class="miniIcon" class="icon-mini"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -74,6 +78,7 @@
     </transition>
     <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error"
            @timeupdate="updateTime"
+           @ended="end"
     ></audio>
   </div>
 </template>
@@ -81,13 +86,18 @@
 <script type="text/ecmascript-6">
   import { mapGetters, mapMutations } from 'vuex'
   import animations from 'create-keyframe-animation'
-  import {perfisle} from 'common/js/dom'
+  import ProgressOvar from 'base/progressOvar/progerss'
+  import ProgressCircle from 'base/progress-circle/progress-circle'
+  import { perfisle } from 'common/js/dom'
+  import { shuffle } from 'common/js/util'
+  import { playMode } from 'common/js/config'
   const transform = perfisle('transform')
   export default {
     data() {
       return {
         songReady: false,
-        currentTime: 0
+        currentTime: 0,
+        radius: 32
       }
     },
     computed: {
@@ -103,12 +113,20 @@
       disbleCls() {
         return this.songReady ? '' : 'disable'
       },
+      percent() {
+        return this.currentTime / this.currentSong.duration
+      },
+      iconMOde() {
+        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+      },
       ...mapGetters([
         'fullScreen',
         'playlist',
         'currentSong',
         'playing',
-        'currentIndex'
+        'currentIndex',
+        'mode',
+        'sequenceList'
       ])
     },
     methods: {
@@ -218,20 +236,61 @@
         }
         this.songReady = false
       },
+      end() {
+        if (this.mode === playMode.loop) {
+          this.loop()
+        } else {
+          this.next()
+        }
+      },
+      loop() {
+        this.$refs.audio.currentTime = 0
+        this.$refs.audio.play()
+      },
       ready() {
         this.songReady = true
       },
       error() {
         this.songReady = true
       },
+      msjabc(persin) {
+        this.$refs.audio.currentTime = this.currentSong.duration * persin
+        if (!this.playing) {
+          this.togglePlying()
+        }
+      },
+      chingeMode() {
+        const mode = (this.mode + 1) % 3
+        this.stePlayMode(mode)
+        let list = null
+        if (mode === playMode.random) {
+          console.log(mode)
+          list = shuffle(this.sequenceList)
+        } else {
+          list = this.sequenceList
+        }
+        this.restCurrentIndex(list)
+        this.setPlayingList(list)
+      },
+      restCurrentIndex(list) {
+        let index = list.findIndex((item) => {
+          return item.id === this.currentSong.id
+        })
+        this.setCurrrniIndex(index)
+      },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
         setPlayingState: 'SET_PLAYING_STATE',
-        setCurrrniIndex: 'SET_CURRENTZ_INDEX'
+        setCurrrniIndex: 'SET_CURRENTZ_INDEX',
+        stePlayMode: 'SET_PLAY_MODE',
+        setPlayingList: 'SET_PLAYLIST'
       })
     },
     watch: {
-      currentSong() {
+      currentSong(newa, newb) {
+        if (newa.id === newb.id) {
+          return
+        }
         this.$nextTick(() => {
           this.$refs.audio.play()
         })
@@ -242,6 +301,10 @@
           newPlaying ? audio.play() : audio.pause()
         })
       }
+    },
+    components: {
+      ProgressOvar,
+      ProgressCircle
     }
   }
 </script>

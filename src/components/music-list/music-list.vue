@@ -4,7 +4,7 @@
       <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
-    <div class="bg-image" :style="bgtyle" ref="bgImage">
+    <div class="bg-image" :style="bgtyle" ref="bgImage" @click="radnom">
       <div class="play-wrapper">
         <div ref="playBtn" v-show="songs.length > 0" class="play" >
           <i class="icon-play"></i>
@@ -78,8 +78,14 @@
           index
         })
       },
+      radnom() {
+        this.randomPlay({
+          list: this.songs
+        })
+      },
       ...mapActions([
-        'seletPlay'
+        'seletPlay',
+        'randomPlay'
       ])
     },
     watch: {

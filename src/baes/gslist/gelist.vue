@@ -83,6 +83,9 @@
         let achorindex = parseInt(this.touchl.achorindex) + datalenght
         this.moveapple(achorindex)
       },
+      refresh() {
+        this.$refs.listview.refresh()
+      },
       scroll(pos) {
         this.scrollY = pos.y
       },
@@ -90,7 +93,6 @@
         if (!index && index !== 0) {
           return
         }
-        console.log(1)
         if (index < 0) {
           index = 0
         } else if (index > this.listheight.length - 2) {

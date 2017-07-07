@@ -1,6 +1,6 @@
 <template>
   <div class="singer" ref="singer">
-    <list-view @select="selectSinger" :data="singelist"></list-view>
+    <list-view @select="selectSinger" :data="singelist" ref="singelist"></list-view>
     <router-view></router-view>
   </div>
 </template>
@@ -11,10 +11,12 @@
   import Singer from 'common/js/singer'
   import ListView from 'base/gslist/gelist'
   import {mapMutations} from 'vuex'
+  import { playlistMixin } from 'common/js/mixin'
   const HOT_NAME = '热门'
   const HOT_NAME_LENGTH = 10
 
   export default {
+    mixins: [playlistMixin],
     data() {
       return {
         singelist: []
@@ -24,6 +26,11 @@
       this.geshoulist()
     },
     methods: {
+      handlePlaying(palylist) {
+        const bottom = palylist.length > 0 ? '60px' : ''
+        this.$refs.singer.style.bottom = bottom
+        this.$refs.singelist.refresh()
+      },
       selectSinger(singer) {
         this.$router.push({
           path: `/two/${singer.id}`

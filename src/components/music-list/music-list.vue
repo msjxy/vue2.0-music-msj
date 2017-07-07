@@ -6,32 +6,34 @@
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgtyle" ref="bgImage" @click="radnom">
       <div class="play-wrapper">
-        <div ref="playBtn" v-show="songs.length > 0" class="play" >
+        <div ref="playBtn" v-show="songs.length > 0" class="play">
           <i class="icon-play"></i>
           <span class="text">随机播放全部</span>
         </div>
       </div>
       <div class="filter" ref="filter"></div>
     </div>
-    <div class="bg-layer" ref="layer">   </div>
-      <scroll @scroll="scrolls" :probe-type="probeType" :listlety="listlety" :data="songs" class="list"
-              ref="list">
-        <div class="song-list-wrapper">
-          <song-list @select="selectItem" :songs="songs"></song-list>
-        </div>
-      </scroll>
+    <div class="bg-layer" ref="layer"></div>
+    <scroll @scroll="scrolls" :probe-type="probeType" :listlety="listlety" :data="songs" class="list"
+            ref="list">
+      <div class="song-list-wrapper">
+        <song-list @select="selectItem" :songs="songs"></song-list>
+      </div>
+    </scroll>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import Scroll from 'base/scrools/scroll'
   import SongList from 'base/song-list/song-list'
-  import {perfisle} from 'common/js/dom'
-  import {mapActions} from 'vuex'
+  import { perfisle } from 'common/js/dom'
+  import { mapActions } from 'vuex'
+  import { playlistMixin } from 'common/js/mixin'
   const transfo = perfisle('transform')
   const drakemax = perfisle('backdrop-filter')
 
   export default {
+    mixins: [playlistMixin],
     props: {
       bgImage: {
         type: String,
@@ -66,6 +68,11 @@
       }
     },
     methods: {
+      handlePlaying(palylist) {
+        const bottom = palylist.length > 0 ? '60px' : ''
+        this.$refs.list.$el.style.bottom = bottom
+        this.$refs.list.refresh()
+      },
       scrolls(pos) {
         this.scrollY = pos.y
       },

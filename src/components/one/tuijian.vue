@@ -1,34 +1,34 @@
 <template>
-  <div class="recommend" >
+  <div class="recommend" ref="recommend">
     <scroll ref="scroll" class="recommend-content" :data="listder">
-    <div>
-    <div v-if="lbtsdata.length" class="slider-wrapper">
-      <lbts>
-        <div v-for="item in lbtsdata">
-          <a :href="item.linkUrl">
-            <img @load="loadimg" class="needsclick"  :src="item.picUrl">
-          </a>
+      <div>
+        <div v-if="lbtsdata.length" class="slider-wrapper">
+          <lbts>
+            <div v-for="item in lbtsdata">
+              <a :href="item.linkUrl">
+                <img @load="loadimg" class="needsclick" :src="item.picUrl">
+              </a>
+            </div>
+          </lbts>
         </div>
-      </lbts>
-    </div>
-    <div class="recommend-list">
-      <h1 class="list-title">热门歌单推荐</h1>
-      <ul>
-        <li  class="item" v-for="item in listder">
-          <div class="icon">
-            <img width="60" height="60" v-lazy="item.imgurl">
-          </div>
-          <div class="text">
-            <h2 class="name"  v-html="item.creator.name"></h2>
-            <p class="desc" v-html="item.dissname"></p>
-          </div>
-        </li>
-      </ul>
-    </div>
-   </div>
-    <div class="loading-container" v-show="!listder.length">
-      <Lading></Lading>
-    </div>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li class="item" v-for="item in listder">
+              <div class="icon">
+                <img width="60" height="60" v-lazy="item.imgurl">
+              </div>
+              <div class="text">
+                <h2 class="name" v-html="item.creator.name"></h2>
+                <p class="desc" v-html="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="loading-container" v-show="!listder.length">
+        <Lading></Lading>
+      </div>
     </scroll>
   </div>
 
@@ -38,9 +38,11 @@
   import Lading from 'base/loading/loading'
   import Scroll from 'base/scrools/scroll'
   import Lbts from 'base/lbt/lbt'
-  import {getRecommend, getLitsfe} from 'api/tuijian-data'
-  import {ERR_OK} from 'api/config'
+  import { getRecommend, getLitsfe } from 'api/tuijian-data'
+  import { ERR_OK } from 'api/config'
+  import { playlistMixin } from 'common/js/mixin'
   export default {
+    mixins: [playlistMixin],
     data() {
       return {
         lbtsdata: [],
@@ -54,6 +56,11 @@
       this.getLitsfeas()
     },
     methods: {
+      handlePlaying(palylist) {
+        const bottom = palylist.length > 0 ? '60px' : ''
+        this.$refs.recommend.style.bottom = bottom
+        this.$refs.scroll.refresh()
+      },
       agetRecommend() {
         getRecommend().then((res) => {
           if (res.code === ERR_OK) {
@@ -90,23 +97,28 @@
     text-align: center
     font-size: $font-size-medium
     color: $color-theme
+
   .recommend
     position: fixed
     width: 100%
     top: 88px
     bottom: 0
+
   .recommend-content
     height: 100%
     overflow: hidden
+
   .slider-wrapper
     position: relative
     width: 100%
     overflow: hidden
+
   .loading-container
     position: absolute
     width: 100%
     top: 50%
     transform: translateY(-50%)
+
   .recommend-list
     .item
       display: flex

@@ -29,7 +29,7 @@
               </div>
             </div>
             <div class="playing-lyric-wrapper">
-              <div class="playing-lyric">{{}}</div>
+              <div class="playing-lyric">{{polayingLing}}</div>
             </div>
           </div>
           <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
@@ -122,7 +122,8 @@
         radius: 32,
         currentLyric: null,
         currentLineNum: 0,
-        currentShow: 'cd'
+        currentShow: 'cd',
+        polayingLing: ''
       }
     },
     computed: {
@@ -202,7 +203,13 @@
         this.$refs.cdWrapper.style[transform] = ''
       },
       togglePlying() {
+        if (!this.songReady) {
+          return
+        }
         this.setPlayingState(!this.playing)
+        if (this.currentLyric) {
+          this.currentLyric.togglePlay()
+        }
       },
       getPosandScale() {
         const targetWidth = 40
@@ -237,12 +244,17 @@
         return num
       },
       next() {
+        let index
         if (!this.songReady) {
           return
         }
-        let index = this.currentIndex + 1
-        if (index === this.playlist.length) {
-          index = 0
+        if (this.playlist.length === 1) {
+          this.loop()
+        } else {
+          index = this.currentIndex + 1
+          if (index === this.playlist.length) {
+            index = 0
+          }
         }
         this.setCurrrniIndex(index)
         if (!this.playing) {
@@ -254,13 +266,17 @@
         if (!this.songReady) {
           return
         }
-        let index = this.currentIndex - 1
-        if (index === -1) {
-          index = this.playlist.length - 1
-        }
-        this.setCurrrniIndex(index)
-        if (!this.playing) {
-          this.togglePlying()
+        if (this.playlist.length === 1) {
+          this.loop()
+        } else {
+          let index = this.currentIndex - 1
+          if (index === -1) {
+            index = this.playlist.length - 1
+          }
+          this.setCurrrniIndex(index)
+          if (!this.playing) {
+            this.togglePlying()
+          }
         }
         this.songReady = false
       },
@@ -274,6 +290,9 @@
       loop() {
         this.$refs.audio.currentTime = 0
         this.$refs.audio.play()
+        if (this.currentLyric) {
+          this.currentLyric.seek(0)
+        }
       },
       ready() {
         this.songReady = true
@@ -282,9 +301,13 @@
         this.songReady = true
       },
       msjabc(persin) {
-        this.$refs.audio.currentTime = this.currentSong.duration * persin
+        const currentTime = this.currentSong.duration * persin
+        this.$refs.audio.currentTime = currentTime
         if (!this.playing) {
           this.togglePlying()
+        }
+        if (this.currentLyric) {
+          this.currentLyric.seek(currentTime * 1000)
         }
       },
       chingeMode() {
@@ -306,6 +329,10 @@
           if (this.playing) {
             this.currentLyric.play()
           }
+        }).catch(() => {
+          this.currentLyric = null
+          this.polayingLing = ''
+          this.currentLineNum = 0
         })
       },
       handleFyric({lineNum, txt}) {
@@ -316,6 +343,7 @@
         } else {
           this.$refs.lyricList.scrollTo(0, 0, 1000)
         }
+        this.polayingLing = txt
       },
       middleTouchStart(e) {
         this.touch.initiated = true
@@ -390,10 +418,13 @@
         if (newa.id === newb.id) {
           return
         }
-        this.$nextTick(() => {
+        if (this.currentLyric) {
+          this.currentLyric.stop()
+        }
+        setTimeout(() => {
           this.$refs.audio.play()
           this.getLyric()
-        })
+        }, 1000)
       },
       playing(newPlaying) {
         const audio = this.$refs.audio

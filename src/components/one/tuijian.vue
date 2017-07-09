@@ -14,7 +14,7 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li class="item" v-for="item in listder">
+            <li @click="selectItem(item)" class="item" v-for="item in listder">
               <div class="icon">
                 <img width="60" height="60" v-lazy="item.imgurl">
               </div>
@@ -30,6 +30,7 @@
         <Lading></Lading>
       </div>
     </scroll>
+    <router-view></router-view>
   </div>
 
 </template>
@@ -41,6 +42,7 @@
   import { getRecommend, getLitsfe } from 'api/tuijian-data'
   import { ERR_OK } from 'api/config'
   import { playlistMixin } from 'common/js/mixin'
+  import {mapMutations} from 'vuex'
   export default {
     mixins: [playlistMixin],
     data() {
@@ -61,6 +63,12 @@
         this.$refs.recommend.style.bottom = bottom
         this.$refs.scroll.refresh()
       },
+      selectItem(item) {
+        this.$router.push({
+          path: `/one/${item.dissid}`
+        })
+        this.setDisc(item)
+      },
       agetRecommend() {
         getRecommend().then((res) => {
           if (res.code === ERR_OK) {
@@ -80,7 +88,10 @@
           this.$refs.scroll.refresh()
           this.checkload = true
         }
-      }
+      },
+      ...mapMutations({
+        setDisc: 'SET_DISC'
+      })
     },
     components: {
       Lbts,

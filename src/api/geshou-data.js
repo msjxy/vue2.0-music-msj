@@ -1,5 +1,5 @@
 import jsonp from 'common/js/jsonp'
-import {commonParams, options} from './config'
+import { commonParams, options } from './config'
 export function gettwo () {
   console.log('gettwo')
   const url = 'https://c.y.qq.com/v8/fcg-bin/v8.fcg'
@@ -13,7 +13,6 @@ export function gettwo () {
     platform: 'yqq',
     needNewCode: 0
   })
-  console.log(jsonp(url, data, options))
   return jsonp(url, data, options)
 }
 
@@ -30,5 +29,30 @@ export function geshouxingqing (singerid) {
     singermid: singerid,
     g_tk: 1664029744
   })
+  return jsonp(url, data, options)
+}
+
+export function getSongList (disstid) {
+  const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+  const data = Object.assign({}, commonParams, {
+    disstid,
+    type: 1,
+    json: 1,
+    utf8: 1,
+    onlysong: 0,
+    format: 'jsonp',
+    g_tk: 1825105721,
+    jsonpCallback: 'playlistinfoCallback',
+    loginUin: 0,
+    hostUin: 0,
+    inCharset: 'utf8',
+    outCharset: 'utf-8',
+    notice: 0,
+    platform: 'yqq',
+    needNewCode: 0
+  })
+  const options = {
+    name: 'playlistinfoCallback'
+  }
   return jsonp(url, data, options)
 }

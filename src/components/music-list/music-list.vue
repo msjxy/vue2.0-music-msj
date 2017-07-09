@@ -14,10 +14,10 @@
       <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
-    <scroll @scroll="scrolls" :probe-type="probeType" :listlety="listlety" :data="songs" class="list"
+    <scroll  @scroll="scrolls" :probe-type="probeType" :listlety="listlety" :data="songs" class="list"
             ref="list">
       <div class="song-list-wrapper">
-        <song-list @select="selectItem" :songs="songs"></song-list>
+        <song-list  :rank="rank" @select="selectItem" :songs="songs"></song-list>
       </div>
     </scroll>
   </div>
@@ -46,6 +46,10 @@
       title: {
         type: String,
         default: ''
+      },
+      rank: {
+        type: Boolean,
+        dedault: false
       }
     },
     computed: {

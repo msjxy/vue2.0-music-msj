@@ -5,6 +5,8 @@ import Two from 'components/two/geshou'
 import Three from 'components/three/paihang'
 import Four from 'components/four/sousuo'
 import SingerDetall from 'components/singer-detall/singer-detall'
+import Disc from 'components/disc/disc'
+import TopoList from 'components/top-list/top-list'
 Vue.use(Router)
 
 export default new Router({
@@ -15,7 +17,13 @@ export default new Router({
     },
     {
       path: '/one',
-      component: One
+      component: One,
+      children: [
+        {
+          path: ':id',
+          component: Disc
+        }
+      ]
     },
     {
       path: '/two',
@@ -30,7 +38,13 @@ export default new Router({
     },
     {
       path: '/three',
-      component: Three
+      component: Three,
+      children: [
+        {
+          path: ':id',
+          component: TopoList
+        }
+      ]
     },
     {
       path: '/four',

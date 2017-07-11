@@ -34,7 +34,6 @@ export default new Router({
           component: SingerDetall
         }
       ]
-
     },
     {
       path: '/three',
@@ -48,7 +47,13 @@ export default new Router({
     },
     {
       path: '/four',
-      component: Four
+      component: Four,
+      children: [
+        {
+          path: ':id',
+          component: SingerDetall
+        }
+      ]
     }
   ]
 })

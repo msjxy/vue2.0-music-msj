@@ -1,9 +1,11 @@
 <template>
   <Scroll class="suggest" :data="result" ref="suggest" :pullup="pullup"
+          :beforeScsroll="beforeScsroll"
           @scrollToEnd="searchMore"
+          @beforeScsroll="listScroll"
   >
     <ul class="suggest-list">
-      <li class="suggest-item" v-for="item in result">
+      <li @click="selectItem(item)" class="suggest-item" v-for="item in result">
         <div class="icon">
           <i :class="getIconCla(item)"></i>
         </div>
@@ -15,6 +17,9 @@
         <loading v-show="hasMore" title="正在加载"></loading>
       </li>
     </ul>
+    <div class="no-result-wrapper" v-show="!hasMore && !result.length">
+        <no-result title="抱歉, 暂无搜索结果"></no-result>
+    </div>
   </Scroll>
 </template>
 
@@ -24,7 +29,9 @@
   import { createdata } from 'common/js/song'
   import Scroll from 'base/scrools/scroll'
   import Loading from 'base/loading/loading'
-
+  import Singer from 'common/js/singer'
+  import { mapMutations, mapActions } from 'vuex'
+  import NoResult from 'base/no-result/no-result'
   const TYPE_SINGER = 'singer'
   const perpage = 20
   export default {
@@ -43,6 +50,7 @@
         page: 1,
         result: [],
         pullup: true,
+        beforeScsroll: true,
         hasMore: true
       }
     },
@@ -72,6 +80,9 @@
           }
         })
       },
+      listScroll() {
+        this.$emit('listScroll')
+      },
       checkMore(data) {
         const song = data.song
         if (!song.list.length || (song.curnum + song.curpage * 20) > song.totalnum) {
@@ -80,15 +91,17 @@
       },
       genResa(data) {
         let ret = []
-        if (data.zhida && data.zhida.singerid) {
+        if (data.zhida && data.zhida.singername) {
           ret.push({
             ...data.zhida,
             ...{type: TYPE_SINGER}
           })
         }
+        console.log(3333)
         if (data.song) {
           ret = ret.concat(this.normalsong(data.song.list))
         }
+        console.log(ret[0])
         return ret
       },
       getIconCla(item) {
@@ -100,7 +113,7 @@
       },
       gtedisName(item) {
         if (item.type === TYPE_SINGER) {
-          return item.albumname
+          return item.singername
         } else {
           console.log(item)
           return `${item.name}-${item.singer}`
@@ -114,7 +127,27 @@
           }
         })
         return ret
-      }
+      },
+      selectItem(item) {
+        if (item.type === TYPE_SINGER) {
+          const singer = new Singer({
+            id: item.singermid,
+            name: item.singername
+          })
+          this.$router.push({
+            path: `/four/${singer.id}`
+          })
+          this.setSinger(singer)
+        } else {
+          this.insertSong(item)
+        }
+      },
+      ...mapMutations({
+        setSinger: 'SET_SINGER'
+      }),
+      ...mapActions([
+        'insertSong'
+      ])
     },
     watch: {
       query() {
@@ -123,7 +156,8 @@
     },
     components: {
       Scroll,
-      Loading
+      Loading,
+      NoResult
     }
   }
 </script>

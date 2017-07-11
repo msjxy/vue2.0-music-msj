@@ -15,3 +15,15 @@ export function shuffle (arr) {
 function getRandomint (min, mix) {
   return Math.floor(Math.random() * (mix - min + 1) + min)
 }
+
+export function debouuce (fun, delay) {
+  let tiemr
+  return function (...args) {
+    if (tiemr) {
+      clearTimeout(tiemr)
+    }
+    tiemr = setTimeout(() => {
+      fun.apply(this, args)
+    }, delay)
+  }
+}

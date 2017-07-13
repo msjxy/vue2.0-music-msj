@@ -141,6 +141,7 @@
         } else {
           this.insertSong(item)
         }
+        this.$emit('msjHist')
       },
       ...mapMutations({
         setSinger: 'SET_SINGER'

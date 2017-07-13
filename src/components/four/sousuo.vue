@@ -14,12 +14,24 @@
               </li>
             </ul>
           </div>
+          <div class="search-history" v-show="searchHistory.length > 0">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click="showalsrts">
+                <i class="icon-clear"></i>
+              </span>
+            </h1>
+            <search-list @select="addQuery" @delete="deleteOne" :msjlishidata="searchHistory"></search-list>
+          </div>
         </div>
       </div>
     </div>
     <div class="search-result" v-show="query">
-      <suggest @listScroll="blurInput" :query="query"></suggest>
+      <suggest @msjHist="msjlishi" @listScroll="blurInput" :query="query"></suggest>
     </div>
+    <alerts ref="alerts" text="是否清空,原来是这样" confirmBtnText="太阳"
+            @confirm="deleteALl"
+    ></alerts>
     <router-view></router-view>
   </div>
 </template>
@@ -29,6 +41,9 @@
   import { getsousuo } from 'api/sercah'
   import { ERR_OK } from 'api/config'
   import Suggest from 'components/suggest/suggest'
+  import { mapActions, mapGetters } from 'vuex'
+  import SearchList from 'base/search-list/search-list'
+  import alerts from 'base/confirm/confirm'
   export default {
     created() {
       this.getsousuok()
@@ -38,6 +53,11 @@
         hotKey: [],
         query: ''
       }
+    },
+    computed: {
+      ...mapGetters([
+        'searchHistory'
+      ])
     },
     methods: {
       getsousuok() {
@@ -56,11 +76,30 @@
       },
       blurInput() {
         this.$refs.searchBox.blur()
-      }
+      },
+      msjlishi() {
+        this.saveSearchHistory(this.query)
+      },
+      deleteOne(item) {
+        this.deleteSearchHistory(item)
+      },
+      deleteALl() {
+        this.clearSearchHistory()
+      },
+      showalsrts() {
+        this.$refs.alerts.show()
+      },
+      ...mapActions([
+        'saveSearchHistory',
+        'deleteSearchHistory',
+        'clearSearchHistory'
+      ])
     },
     components: {
       SearchBox,
-      Suggest
+      Suggest,
+      SearchList,
+      alerts
     }
   }
 </script>

@@ -17,3 +17,4 @@ export const currentSong = (state) => {
 }
 export const topList = state => state.topList
 export const disc = state => state.disc
+export const searchHistory = state => state.searchHistory

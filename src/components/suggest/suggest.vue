@@ -83,6 +83,9 @@
       listScroll() {
         this.$emit('listScroll')
       },
+      refresh() {
+        this.$refs.suggest.refresh()
+      },
       checkMore(data) {
         const song = data.song
         if (!song.list.length || (song.curnum + song.curpage * 20) > song.totalnum) {

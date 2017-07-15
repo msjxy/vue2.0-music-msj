@@ -4,7 +4,7 @@
       <search-box ref="searchBox" @query="inQueryChange"></search-box>
     </div>
     <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
-      <div ref="shortcut" class="shortcut">
+      <scroll ref="shortcut" class="shortcut" :data="shortcut">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -24,10 +24,10 @@
             <search-list @select="addQuery" @delete="deleteOne" :msjlishidata="searchHistory"></search-list>
           </div>
         </div>
-      </div>
+      </scroll>
     </div>
-    <div class="search-result" v-show="query">
-      <suggest @msjHist="msjlishi" @listScroll="blurInput" :query="query"></suggest>
+    <div ref="searchResult" class="search-result" v-show="query">
+      <suggest ref="suggest" @msjHist="msjlishi" @listScroll="blurInput" :query="query"></suggest>
     </div>
     <alerts ref="alerts" text="是否清空,原来是这样" confirmBtnText="太阳"
             @confirm="deleteALl"
@@ -44,7 +44,10 @@
   import { mapActions, mapGetters } from 'vuex'
   import SearchList from 'base/search-list/search-list'
   import alerts from 'base/confirm/confirm'
+  import Scroll from 'base/scrools/scroll'
+  import { playlistMixin } from 'common/js/mixin'
   export default {
+    mixins: [playlistMixin],
     created() {
       this.getsousuok()
     },
@@ -55,6 +58,9 @@
       }
     },
     computed: {
+      shortcut() {
+        return this.hotKey.concat(this.searchHistory)
+      },
       ...mapGetters([
         'searchHistory'
       ])
@@ -89,17 +95,34 @@
       showalsrts() {
         this.$refs.alerts.show()
       },
+      handlePlaying(palylist) {
+        const bottom = palylist.length > 0 ? '60px' : ''
+        this.$refs.shortcutWrapper.style.bottom = bottom
+        this.$refs.shortcut.refresh()
+        this.$refs.searchResult.style.bottom = bottom
+        this.$refs.suggest.refresh()
+      },
       ...mapActions([
         'saveSearchHistory',
         'deleteSearchHistory',
         'clearSearchHistory'
       ])
     },
+    watch: {
+      query(newQuery) {
+        if (!newQuery) {
+          setTimeout(() => {
+            this.$refs.shortcut.refresh()
+          }, 20)
+        }
+      }
+    },
     components: {
       SearchBox,
       Suggest,
       SearchList,
-      alerts
+      alerts,
+      Scroll
     }
   }
 </script>

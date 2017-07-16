@@ -13,14 +13,14 @@ export const playlistMixin = {
   activated() {
     this.handlePlaying(this.playlist)
   },
-  watch: {
-    playList(newVal) {
-      this.handlePlaying(newVal)
-    }
-  },
   methods: {
     handlePlaying() {
       throw new Error('compenss撒大声地')
+    }
+  },
+  watch: {
+    playList(newVal) {
+      this.handlePlaying(newVal)
     }
   }
 }

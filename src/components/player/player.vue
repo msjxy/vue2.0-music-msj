@@ -108,7 +108,6 @@
   import ProgressOvar from 'base/progressOvar/progerss'
   import ProgressCircle from 'base/progress-circle/progress-circle'
   import { perfisle } from 'common/js/dom'
-  import { shuffle } from 'common/js/util'
   import { playMode } from 'common/js/config'
   import Lyric from 'lyric-parser'
   import Scroll from 'base/scrools/scroll'
@@ -148,8 +147,8 @@
       },
       ...mapGetters([
         'fullScreen',
-        'playlist',
-        'currentSong'
+        'playing',
+        'currentIndex'
       ])
     },
     created() {
@@ -307,19 +306,6 @@
           this.currentLyric.seek(currentTime * 1000)
         }
       },
-      chingeMode() {
-        const mode = (this.mode + 1) % 3
-        this.stePlayMode(mode)
-        let list = null
-        if (mode === playMode.random) {
-          console.log(mode)
-          list = shuffle(this.sequenceList)
-        } else {
-          list = this.sequenceList
-        }
-        this.restCurrentIndex(list)
-        this.setPlayingList(list)
-      },
       getLyric() {
         this.currentSong.getLyric().then((lyric) => {
           this.currentLyric = new Lyric(lyric, this.handleFyric)
@@ -395,12 +381,6 @@
         this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
         this.$refs.middleL.style.opacity = opacity
         this.$refs.middleL.style[transitionDuration] = 0
-      },
-      restCurrentIndex(list) {
-        let index = list.findIndex((item) => {
-          return item.id === this.currentSong.id
-        })
-        this.setCurrrniIndex(index)
       },
       showPlaylist() {
         this.$refs.palylist.show()

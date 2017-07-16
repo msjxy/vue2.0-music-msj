@@ -6,7 +6,7 @@
           <h1 class="title">
             <i class="icon" :class="iconMode" @click="chingeMode"></i>
             <span class="text">{{modeText}}</span>
-            <span class="clear" @click="showConfir"><i class="icon-clear"></i></span>
+            <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
         <scroll :data="sequenceList" ref="listContent" class="list-content">
@@ -92,7 +92,7 @@
         this.setCurretIndex(index)
         this.setPlayingState(true)
       },
-      showConfir() {
+      showConfirm() {
         this.$refs.confirm.show()
       },
       confirmClear() {

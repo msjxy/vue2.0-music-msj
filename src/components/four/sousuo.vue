@@ -41,29 +41,25 @@
   import { getsousuo } from 'api/sercah'
   import { ERR_OK } from 'api/config'
   import Suggest from 'components/suggest/suggest'
-  import { mapActions, mapGetters } from 'vuex'
+  import { mapActions } from 'vuex'
   import SearchList from 'base/search-list/search-list'
   import alerts from 'base/confirm/confirm'
   import Scroll from 'base/scrools/scroll'
-  import { playlistMixin } from 'common/js/mixin'
+  import { playlistMixin, searchMixin } from 'common/js/mixin'
   export default {
-    mixins: [playlistMixin],
+    mixins: [playlistMixin, searchMixin],
     created() {
       this.getsousuok()
     },
     data() {
       return {
-        hotKey: [],
-        query: ''
+        hotKey: []
       }
     },
     computed: {
       shortcut() {
         return this.hotKey.concat(this.searchHistory)
-      },
-      ...mapGetters([
-        'searchHistory'
-      ])
+      }
     },
     methods: {
       getsousuok() {
@@ -73,18 +69,6 @@
             console.log(res.data.hotkey)
           }
         })
-      },
-      addQuery(query) {
-        this.$refs.searchBox.setQuery(query)
-      },
-      inQueryChange(query) {
-        this.query = query
-      },
-      blurInput() {
-        this.$refs.searchBox.blur()
-      },
-      msjlishi() {
-        this.saveSearchHistory(this.query)
       },
       deleteOne(item) {
         this.deleteSearchHistory(item)
@@ -103,8 +87,6 @@
         this.$refs.suggest.refresh()
       },
       ...mapActions([
-        'saveSearchHistory',
-        'deleteSearchHistory',
         'clearSearchHistory'
       ])
     },

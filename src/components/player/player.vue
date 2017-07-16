@@ -57,7 +57,7 @@
           </div>
           <div class="operators">
             <div class="icon i-left" @click="chingeMode">
-              <i :class="iconMOde"></i>
+              <i :class="iconMode"></i>
             </div>
             <div class="icon i-left" :class="disbleCls">
               <i @click="prev" class="icon-prev"></i>
@@ -89,11 +89,12 @@
             <i @click.stop="togglePlying" :class="miniIcon" class="icon-mini"></i>
           </progress-circle>
         </div>
-        <div class="control">
+        <div class="control" @click.stop="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <playlist ref="palylist"></playlist>
     <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error"
            @timeupdate="updateTime"
            @ended="end"
@@ -111,10 +112,13 @@
   import { playMode } from 'common/js/config'
   import Lyric from 'lyric-parser'
   import Scroll from 'base/scrools/scroll'
+  import playlist from 'components/playlist/playlist'
+  import {playerMixin} from 'common/js/mixin'
 
   const transform = perfisle('transform')
   const transitionDuration = perfisle('transitionDuration')
   export default {
+    mixins: [playerMixin],
     data() {
       return {
         songReady: false,
@@ -142,17 +146,10 @@
       percent() {
         return this.currentTime / this.currentSong.duration
       },
-      iconMOde() {
-        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-      },
       ...mapGetters([
         'fullScreen',
         'playlist',
-        'currentSong',
-        'playing',
-        'currentIndex',
-        'mode',
-        'sequenceList'
+        'currentSong'
       ])
     },
     created() {
@@ -405,16 +402,18 @@
         })
         this.setCurrrniIndex(index)
       },
+      showPlaylist() {
+        this.$refs.palylist.show()
+      },
       ...mapMutations({
-        setFullScreen: 'SET_FULL_SCREEN',
-        setPlayingState: 'SET_PLAYING_STATE',
-        setCurrrniIndex: 'SET_CURRENTZ_INDEX',
-        stePlayMode: 'SET_PLAY_MODE',
-        setPlayingList: 'SET_PLAYLIST'
+        setFullScreen: 'SET_FULL_SCREEN'
       })
     },
     watch: {
       currentSong(newa, newb) {
+        if (!newa.id) {
+          return
+        }
         if (newa.id === newb.id) {
           return
         }
@@ -436,7 +435,8 @@
     components: {
       ProgressOvar,
       ProgressCircle,
-      Scroll
+      Scroll,
+      playlist
     }
   }
 </script>

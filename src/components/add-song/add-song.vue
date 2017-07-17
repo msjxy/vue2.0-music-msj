@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="search-result" v-show="query">
-        <suggest :query="query" :showSinger="showSinger" @select="selectSuggest" @listScroll="blurInput"  ></suggest>
+        <suggest :query="query" :showSinger="showSinger" @msjHist="msjlishi1" @listScroll="blurInput"  ></suggest>
       </div>
       <div ref="topTip">
         <div class="tip-title">
@@ -61,9 +61,6 @@
       }
     },
     computed: {
-//      ...mapGetters([
-//        'playHistory'
-//      ])
     },
     methods: {
       show() {
@@ -79,7 +76,8 @@
       hide() {
         this.showFlag = false
       },
-      selectSuggest() {
+      msjlishi1() {
+        alert('zhecaishi')
         this.msjlishi()
       }
     },

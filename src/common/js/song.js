@@ -4,8 +4,9 @@
 import { getLyric } from 'api/song'
 import { ERR_OK } from 'api/config'
 import { Base64 } from 'js-base64'
+
 export default class Song {
-  constructor ({id, mid, singer, name, album, duration, imge, url}) {
+  constructor ({album, duration, id, imge, mid, name, singer, url}) {
     this.id = id
     this.mid = mid
     this.singer = singer

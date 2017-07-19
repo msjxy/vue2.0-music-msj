@@ -29,6 +29,9 @@ const matutaions = {
   },
   [types.SET_SEARCH_HISTORY](state, histroy) {
     state.searchHistory = histroy
+  },
+  [types.SET_PLAY_HISTORY](state, histroy) {
+    state.playHistory = histroy
   }
 }
 

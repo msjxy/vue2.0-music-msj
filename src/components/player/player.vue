@@ -103,7 +103,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { mapGetters, mapMutations } from 'vuex'
+  import { mapGetters, mapMutations, mapActions } from 'vuex'
   import animations from 'create-keyframe-animation'
   import ProgressOvar from 'base/progressOvar/progerss'
   import ProgressCircle from 'base/progress-circle/progress-circle'
@@ -112,7 +112,7 @@
   import Lyric from 'lyric-parser'
   import Scroll from 'base/scrools/scroll'
   import playlist from 'components/playlist/playlist'
-  import {playerMixin} from 'common/js/mixin'
+  import { playerMixin } from 'common/js/mixin'
 
   const transform = perfisle('transform')
   const transitionDuration = perfisle('transitionDuration')
@@ -292,6 +292,7 @@
       },
       ready() {
         this.songReady = true
+        this.saveplayHistory(this.currentSong)
       },
       error() {
         this.songReady = true
@@ -387,7 +388,10 @@
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN'
-      })
+      }),
+      ...mapActions([
+        'saveplayHistory'
+      ])
     },
     watch: {
       currentSong(newa, newb) {

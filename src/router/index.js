@@ -7,6 +7,7 @@ import Four from 'components/four/sousuo'
 import SingerDetall from 'components/singer-detall/singer-detall'
 import Disc from 'components/disc/disc'
 import TopoList from 'components/top-list/top-list'
+import UserCenter from 'components/user-center/user-center'
 Vue.use(Router)
 
 export default new Router({
@@ -54,6 +55,10 @@ export default new Router({
           component: SingerDetall
         }
       ]
+    },
+    {
+      path: '/user',
+      component: UserCenter
     }
   ]
 })

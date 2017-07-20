@@ -80,7 +80,6 @@
         this.$refs.alerts.show()
       },
       handlePlaying(palylist) {
-        alert(11)
         const bottom = palylist.length > 0 ? '60px' : ''
         this.$refs.shortcutWrapper.style.bottom = bottom
         this.$refs.shortcut.refresh()

@@ -15,7 +15,7 @@ export const playlistMixin = {
   },
   methods: {
     handlePlaying() {
-      throw new Error('compenss撒大声地')
+      throw new Error('component must implement handlePlaylist method')
     }
   },
   watch: {
@@ -24,7 +24,6 @@ export const playlistMixin = {
     }
   }
 }
-
 export const playerMixin = {
   computed: {
     iconMode() {
@@ -34,10 +33,30 @@ export const playerMixin = {
       'sequenceList',
       'currentSong',
       'playlist',
-      'mode'
+      'mode',
+      'favoriteList'
     ])
   },
   methods: {
+    togoFavorite(song) {
+      if (this.isFavorite(song)) {
+        this.deleteFavoriteList(song)
+      } else {
+        this.saveFavoriteList(song)
+      }
+    },
+    getFavoriteIcon(song) {
+      if (this.isFavorite(song)) {
+        return 'icon-favorite'
+      }
+      return 'icon-not-favorite'
+    },
+    isFavorite(song) {
+      const index = this.favoriteList.findIndex((item) => {
+        return item.id === song.id
+      })
+      return index > -1
+    },
     chingeMode() {
       const mode = (this.mode + 1) % 3
       this.stePlayMode(mode)
@@ -62,10 +81,13 @@ export const playerMixin = {
       setCurrrniIndex: 'SET_CURRENTZ_INDEX',
       stePlayMode: 'SET_PLAY_MODE',
       setPlayingList: 'SET_PLAYLIST'
-    })
+    }),
+    ...mapActions([
+      'saveFavoriteList',
+      'deleteFavoriteList'
+    ])
   }
 }
-
 export const searchMixin = {
   data() {
     return {
